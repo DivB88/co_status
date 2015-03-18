@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html>
+<head  lang="en">
+	<title>CO Status Application</title>
+	<!-- Latest compiled and minified CSS -->
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css">
+
+	<!-- Optional theme -->
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap-theme.min.css">
+	
+	
+	
+	<meta charset="utf-8"/>
+	
+		<!-- jquery includes-->
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+	<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.3/jquery-ui.min.js"></script>
+	<link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.3/themes/smoothness/jquery-ui.css" />
+	
+		<!-- adding d3-->
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.5/d3.min.js"></script>
+	
+	<!-- angular js includes-->
+	<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.15/angular.min.js"></script>
+	<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.25/angular-route.min.js"></script>
+	<!-- Custom Script file-->
+	<script src="./controllers/controller.js"></script>
+	
+	<!-- Pagination-->
+	<script type="text/javascript" src="dirPagination.js"></script>	
+		
+		<!-- Generate CSV report -->
+	<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.15/angular-sanitize.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/ng-csv/0.3.1/ng-csv.min.js"></script>
+	
+		
+</head>
+<body>
+	<div data-ng-app="myApp">
+		<div class="container" data-ng-controller="COController">
+			<h1>CO Status<sup>beta<sup></h1>
+			
+				Enter key word for searching : <input  type="text" placeholder="Any text" class="form-control" ng-model="keyword.$"/></br>
+			
+			
+				 </br>
+				 
+				 <table class="table table-bordered">
+				 <tr><td>
+				<div class="col-xs-6">Sort By: <select ng-model="sortExpression" class="form-control">
+			 		<option value="start_date">Start Date</option>
+			 		<option value="end_date">End Date</option>
+			 		<option value="status">Status</option>
+				</select>
+			</div> 
+	             <div class="col-xs-6">Items per page: <input type="number" min="1" max="7" class="form-control" ng-model="pageSize"></div></td>
+	              <td style= "text-align: center; padding : 10 px;" colspan="2" >  <button type="button" class="btn btn-primary" ng-csv="getArray" csv-header="getHeader()" filename="CO_Status.csv" field-separator=",">Click to export to CSV<span class="glyphicon glyphicon-th"></span></button></td>
+	        </tr>
+	        
+		</table>
+			<table class="table table-bordered">
+				<thead style="empty-cells: hide;">
+					<tr><th colspan="16">Enter values in the text boxes to filter </th></tr>
+					<tr>
+						<th><input  type="text" class="form-control" ng-model="keyword.number"/></th>
+	    	 				<th><input  type="text" class="form-control" ng-model="keyword.client"/></th>
+	      	 				<th><input  type="text" class="form-control" ng-model="keyword.transaction"/></th>
+	      	 				<th><input  type="text" class="form-control" ng-model="keyword.est_effort"/></th>
+	      	 				<th><input  type="text" class="form-control" ng-model="keyword.act_effort"/></th>
+	      	 				<th><input  type="text" class="form-control" ng-model="keyword.start_date"/></th>
+	      	 				<th><input  type="text" class="form-control" ng-model="keyword.end_date"/></th>
+	      	 				<th><input  type="text" class="form-control" ng-model="keyword.status"/></th>	      	 				
+	      	 				<th><input  type="text" class="form-control" ng-model="keyword.remarks"/></th>
+	      	 				<th><input  type="text" class="form-control" ng-model="keyword.developer"/></th>
+	      	 				<th><input  type="text" class="form-control" ng-model="keyword.effort_type"/></th>	      	 				
+	      	 				<th><input  type="text" class="form-control" ng-model="keyword.region"/></th>
+	      	 				<th><input  type="text" class="form-control" ng-model="keyword.bis_analyst"/></th>	      	 				
+						<th><input  type="text" class="form-control" ng-model="keyword.bis_transaction"/></th>
+						<th><input  type="text" class="form-control" ng-model="keyword.co_type"/></th>
+	      	 				<th style= "text-align: center" colspan="2" ></th>
+      	 				</tr>
+      	 				<tr>
+						<th>CO number</th>
+	    	 				<th>Client</th>
+	      	 				<th>Transaction</th>
+	      	 				<th>Estimated Effort(Prsn Hrs)</th>
+	      	 				<th>Actual Effort(Prsn Hrs)</th>
+	      	 				<th>Start date</th>
+	      	 				<th>End date</th>
+	      	 				<th>Status</th>	      	 				
+	      	 				<th>Remarks</th>
+	      	 				<th>Developer</th>
+	      	 				<th>Effort Type</th>	      	 				
+	      	 				<th>Region</th>
+	      	 				<th>Business Analyst</th>	      	 				
+						<th>Business Transaction</th>
+						<th>CO type</th>
+	      	 				<th style =  "text-align: center" colspan="2" >Actions</th>
+      	 				</tr>
+      	 			</thead>						
+      	 			<tbody>
+      	 				<tr dir-paginate="co in project | filter : keyword | orderBy:sortExpression | itemsPerPage: pageSize" current-page="currentPage" pagination-id="coPagination">
+      	 					<td> {{ co.number }} </td>
+      	 					<td> {{ co.client }} </td>
+      	 					<td> {{ co.transaction }} </td>
+      	 					<td> {{ co.est_effort }} </td>
+      	 					<td> {{ co.act_effort }} </td>
+      	 					<td> {{ co.start_date | date}} </td>
+      	 					<td> {{ co.end_date | date}} </td>
+      	 					<td> {{ co.status }} </td>
+      	 					<td> {{ co.remarks }} </td>
+      	 					<td> {{ co.developer }} </td>
+      	 					<td> {{ co.effort_type }} </td>
+      	 					<td> {{ co.region }} </td>
+      	 					<td> {{ co.bis_analyst }} </td>
+      	 					<td> {{ co.bis_transaction }} </td>
+      	 					<td> {{ co.co_type }} </td>
+      	 					<td><button class="btn btn-info" data-ng-click="edit(co._id)">Update</button></td>
+      	 					<!--<td><button class="btn btn-danger" data-ng-click="remove(co._id)">Delete</button></td>-->
+      	 				</tr>
+      	 			</tbody>
+      	 		</table>
+      	 		
+      	 		
+      	 		<div class="col-xs-12">
+            			<div class="text-center">
+              			<dir-pagination-controls boundary-links="true" pagination-id="coPagination" on-page-change="pageChangeHandler(newPageNumber)" template-url="dirPagination.tpl.html"></dir-pagination-controls>
+            			</div>
+          		</div>
+          		
+      	 		<table class="table table-bordered">
+      	 			<tbody>
+      	 				<tr>
+      	 					<th>Make New CO Entry</th>
+      	 				</tr>
+      	 				<tr><td>CO Number: <input  type="text" class="form-control" ng-model="newco.number"></td></tr>
+      	 				<tr><td>Client Name: <input  type="text" class="form-control" ng-model="newco.client"></td></tr>
+      	 				<tr><td>Transaction: <input  type="text" class="form-control" ng-model="newco.transaction"></td></tr>
+      	 				
+      	 				
+      	 				<tr><td>Region: <select class="form-control" ng-model="newco.region">
+      	 				 <option value="Africas">Africas</option>
+      	 				 <option value="Americas">Americas</option>
+      	 				 <option value="APAC">APAC</option>
+      	 				 <option value="EMENA">EMENA</option>
+      	 				 <option value="Global">Global</option>
+      	 				 <option value="CLnD">CLnD</option>
+      	 				</select></td></tr>
+      	 				
+
+      	 				<tr><td>Business Analyst: <select   class="form-control" ng-model="newco.bis_analyst">
+      	 				 <option value="BA1">BA1</option>
+      	 				 <option value="BA2">BA2</option>
+      	 				 <option value="BA3">BA3</option>
+      	 				 <option value="BA4">BA4</option>
+      	 				 <option value="BA5">BA5</option>      	 				
+      	 				</select>
+      	 				</td></tr>
+      	 				
+      	 				
+      	 				<tr><td>Estimated Effort: <input type="text" class="form-control" ng-model="newco.est_effort"></td></tr>
+      	 				<tr><td>Actual Effort: <input type="text" class="form-control" ng-model="newco.act_effort"></td></tr>
+      	 				<tr><td>Start Date: <input class="form-control" datepicker date="newco.start_date"/>
+      	 				</td></tr>
+      	 				<tr><td>End Date: <input class="form-control" datepicker date="newco.end_date"></td></tr>
+      	 				
+      	 				<tr><td>Current Status: <select  class="form-control" ng-model="newco.status">
+      	 				 <option value="Planned">Planned</option>
+      	 				 <option value="TDS Signoff Complete">TDS Signoff Complete</option>
+      	 				 <option value="Development">Development</option>
+      	 				 <option value="QC">QC</option>
+      	 				 <option value="UAT">UAT</option>
+      	 				 <option value="CAB Review">CAB Review</option>  
+      	 				 <option value="Deployed">Deployed</option>
+      	 				 <option value="Closed">Closed</option>   
+      	 				 <option value="Waiting">Waiting</option>    
+      	 				</select>
+      	 				</td></tr>
+      	 				
+      	 				
+      	 				<tr><td>Remarks: <input class="form-control" ng-model="newco.remarks"></td></tr>
+      	 				
+      	 				<tr><td>Developer: <select type="text" class="form-control" ng-model="newco.developer">
+      	 				 <option value="Dev1">Dev1</option>
+      	 				 <option value="Dev2">Dev2</option>
+      	 				 <option value="Dev3">Dev3</option>
+      	 				 <option value="Dev4">Dev4</option>
+      	 				</select>
+      	 				</td></tr>
+      	 				
+
+      	 				<tr><td>Effort Type: <select class="form-control" ng-model="newco.effort_type">
+      	 				 <option value="Initial">Initial</option>
+ 	 				 <option value="Scope Creep">Scope Creep</option>
+ 	 				 <option value="TDS Signoff">TDS Signoff</option>
+ 	 				 <option value="UAT Support">UAT Support</option>
+ 	 				 <option value="QC Support">QC Support</option>
+ 	 				 <option value="Review">Review</option>
+ 	 				 <option value="Live Deployment">Live Deployment</option>
+ 	 				 <option value="Review Rework">Review Rework</option>
+ 	 				 <option value="Verify Support">Verify Support</option>
+ 	 				 <option value="Defect">Defect</option>
+ 	 				 <option value="Misc">Misc</option>
+ 	 				 <option value="Demand">Demand</option>
+ 	 				 <option value="Migration">Migration</option>
+      	 				</select></td></tr>
+      	 				
+      	 				<tr><td>Business Transaction: <select  class="form-control" ng-model="newco.bis_transaction">
+      	 				 <option value="ITO">ITO</option>
+ 	 				 <option value="PO">PO</option>
+ 	 				 <option value="Status Mesage">Status Mesage</option>
+ 	 				 <option value="PO Response">PO Response</option>
+ 	 				 <option value="ASN">ASN</option>
+ 	 				 <option value="Customs">Customs</option>
+ 	 				 <option value="Invoice">Invoice</option>
+ 	 				 <option value="Non-Standard">Non-Standard</option>
+      	 				</select>
+      	 				</td></tr>
+      	       	 				
+      	 				<tr><td>CO Type: </br> 
+      	 				<div class="radio form-control">
+  					<label><input type="radio" name="optradio" ng-model="newco.co_type" value="NN">NewTransaction_NewClient(NN)</label>
+					</div>
+					<div class="radio form-control">
+  					<label><input type="radio" name="optradio" ng-model="newco.co_type" value="NE">NewTransaction_ExistingClient(NE)</label>
+					</div>
+					<div class="radio form-control">
+  					<label><input type="radio" name="optradio" ng-model="newco.co_type" value="EE">ExistingTransaction_ExistingClient(EE)</label>
+					</div>      	 				
+					<div class="radio form-control">
+  					<label><input type="radio" name="optradio" ng-model="newco.co_type" value="BugFix">Production BugFix(Bug Fix)</label>
+					</div>      	 				
+      	 				</td></tr>
+      	 				
+      	 				
+      	 				<tr><td><button class="btn btn-success" ng-click="addCo()">Add CO</button>&nbsp;&nbsp;<button class="btn btn-primary" ng-click="update()">Update</button>&nbsp;&nbsp;<button class="btn btn-warning" ng-click="deselect()">Clear</button></td></tr>
+      	 				<tr><td><button class="btn btn-success" ng-click="submitCO()">Submit</button>&nbsp;&nbsp;<button class="btn btn-danger" ng-click="cancel()">Cancel</button></td></tr>
+      	 			</tbody>
+     			</table>
+     				
+     		 		<!--<div bars data="{{ d3str }}"></div>-->
+     		</div>
+
+	</div>
+
+</body>
+</html>
